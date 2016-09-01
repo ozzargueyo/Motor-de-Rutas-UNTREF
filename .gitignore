@@ -1,1 +1,10 @@
 .idea/
+/vcs.xml
+/web-browsers.xml
+/github_settings.xml
+/conda_packages.xml
+/debugger.xml
+/diff.xml
+/packages.xml
+/_windows/
+/inspection/
