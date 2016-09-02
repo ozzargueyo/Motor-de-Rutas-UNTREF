@@ -1,5 +1,10 @@
 <application>
   <component name="PyPackageService">
+    <option name="sdkToUsersite">
+      <map>
+        <entry key="C:\Program Files\Python35-32\python.exe" value="false" />
+      </map>
+    </option>
     <option name="PY_PACKAGES">
       <map>
         <entry key="0-._.-._.-._.-._.-._.-._.-0" value="" />
@@ -39039,7 +39044,7 @@
         <entry key="googlegantt" value="" />
         <entry key="googlegeocodingcli" value="" />
         <entry key="googlegroupexporter" value="" />
-        <entry key="googlemaps" value="" />
+        <entry key="googlemaps" value="2.4.4" />
         <entry key="googlemusicplayer" value="" />
         <entry key="googleplay-api" value="" />
         <entry key="googleplayapi" value="" />
@@ -58124,7 +58129,7 @@
         <entry key="pion" value="" />
         <entry key="pioneeravclient" value="" />
         <entry key="pior" value="" />
-        <entry key="pip" value="" />
+        <entry key="pip" value="8.1.2" />
         <entry key="pip-Win" value="" />
         <entry key="pip-accel" value="" />
         <entry key="pip-autoremove" value="" />
@@ -60293,9 +60298,9 @@
         <entry key="pstats_print2list" value="" />
         <entry key="pstatus" value="" />
         <entry key="pstore" value="" />
-        <entry key="psu" value="" />
+        <entry key="psu" value="0.0.1" />
         <entry key="psu364x" value="" />
-        <entry key="psutil" value="" />
+        <entry key="psutil" value="4.3.1" />
         <entry key="psv" value="" />
         <entry key="pswd" value="" />
         <entry key="pswdclient" value="" />
@@ -70204,7 +70209,7 @@
         <entry key="requestests" value="" />
         <entry key="requestions" value="" />
         <entry key="requeston" value="" />
-        <entry key="requests" value="" />
+        <entry key="requests" value="2.11.1" />
         <entry key="requests-aeaweb" value="" />
         <entry key="requests-aliyun" value="" />
         <entry key="requests-auth-mashery" value="" />
@@ -73304,7 +73309,7 @@
         <entry key="setuppycheck" value="" />
         <entry key="setuptize_me" value="" />
         <entry key="setuptool" value="" />
-        <entry key="setuptools" value="" />
+        <entry key="setuptools" value="26.1.1" />
         <entry key="setuptools-bower" value="" />
         <entry key="setuptools-ci" value="" />
         <entry key="setuptools-clonedigger" value="" />
@@ -84723,7 +84728,7 @@
         <entry key="whatthepatch" value="" />
         <entry key="whatthewhat" value="" />
         <entry key="whatwhen" value="" />
-        <entry key="wheel" value="" />
+        <entry key="wheel" value="0.29.0" />
         <entry key="wheel2conda" value="" />
         <entry key="wheelbarrow" value="" />
         <entry key="wheelbuilder" value="" />
