@@ -1,9 +1,11 @@
 #La aplicacion se corre desde aca
-
+from vistas import Menu
 
 from controladores import motorDeRutas
 
-if __name__ == "__main__":
-    motor = motorDeRutas.MotorDeRutas()
+en_ejecucion = True
+motor = motorDeRutas.MotorDeRutas()
+menu = Menu.Menu(motor)
 
-    motor.run()
+while en_ejecucion:
+    print(menu.elejir_operacion())

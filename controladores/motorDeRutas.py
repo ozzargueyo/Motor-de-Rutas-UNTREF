@@ -13,12 +13,12 @@ class MotorDeRutas(ControladorBase):
     def __init__(self):
         super().__init__()
         # self.menus = Menues(self)
-        try:
-            self.trayectos = json.load(open(os.getcwd()[:-13] + "storage\Trayectos.json", "r"))
-            self.rutas = json.load(open(os.getcwd()[:-13] + "storage\Rutas.json", "r"))
-        except:
-            print(
-                "Error al recuperar los trayectos almacenados, la aplicacion seguira funcionando con trayectos nuevos")
+        # try:
+        self.trayectos = json.load(open(os.getcwd() + "\storage\Trayectos.json", "r"))
+        self.rutas = json.load(open(os.getcwd() + "\storage\Rutas.json", "r"))
+        # except:
+        #  print(
+        #        "Error al recuperar los trayectos almacenados, la aplicacion seguira funcionando con trayectos nuevos")
 
     def run(self):
         # self.menus.mainMenu()
@@ -161,7 +161,11 @@ class MotorDeRutas(ControladorBase):
         d = distancia / 1000
         return "{0:8.2f} km".format(d)
 
+    def obtener_nombre_correcto(self, ciudad):
+        return (self.controlador_google.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0])
 
+
+# CON LOS CAMBIOS ESTE TEST YA NO SE PUEDE EJECUTAR DESDE ACA
 if __name__ == '__main__':
     motor = MotorDeRutas()
     motor.crear_trayecto("Mi Trayecto", "Buenos Aires", "La Plata")
