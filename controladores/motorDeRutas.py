@@ -32,44 +32,57 @@ class MotorDeRutas(ControladorBase):
         en caso de que ya exista un trayecto con ese nombre levanta una exepcion
         """
         if nombre_trayecto in self.trayectos.keys():
-            raise "ya existe un trayecto con ese nombre"
-        self.crear_ruta(origen, destino)
+            print("ya existe un trayecto con ese nombre")
+            return
+        self.crear_ruta(self, origen, destino)
         ciudades = [origen, destino]
         self.trayectos[nombre_trayecto] = ciudades
 
     def agregar_ciudad_intermedia(self, nombre_trayecto, ciudad, indice):
         """Agrega una ruta entre las ciudades indice - 1 indice y indice + 1 si es posible"""
         trayecto = self.trayectos[nombre_trayecto]
-        if indice > 0:
-            self.crear_ruta(trayecto.ciudades[indice - 1], ciudad)
-        if indice < len(trayecto.ciudades):
-            self.crear_ruta(ciudad, trayecto.ciudades[indice])
-        trayecto.ciudades.insert(indice, ciudad)
+        if int(indice) > 0:
+            self.crear_ruta(self, trayecto[indice - 1], ciudad)
+        if int(indice) < len(trayecto):
+            self.crear_ruta(self, ciudad, trayecto[indice])
+        trayecto.insert(indice, ciudad)
 
     def agregar_ciudad_final(self, nombre_trayecto, ciudad):
-        self.agregar_ciudad_intermedia(nombre_trayecto, ciudad, len(self.trayectos[nombre_trayecto].ciudades))
+        self.agregar_ciudad_intermedia(self, nombre_trayecto, ciudad, len(self.trayectos[nombre_trayecto]))
 
     def concatenar_trayectos(self, nuevo_trayecto, primer_trayecto, segundo_trayecto):
         if nuevo_trayecto in self.trayectos.keys():
-            raise "ya existe un trayecto con ese nombre"
-        self.crear_ruta(self.trayectos[primer_trayecto][-1], self.trayectos[segundo_trayecto][0])
+            print("ya existe un trayecto con ese nombre")
+            return
+        self.crear_ruta(self, self.trayectos[primer_trayecto][-1], self.trayectos[segundo_trayecto][0])
         self.trayectos[nuevo_trayecto] = self.trayectos[primer_trayecto] + self.trayectos[segundo_trayecto]
 
     def comparar_trayectos_por_distancia(self, primer_trayecto, segundo_trayecto):
-        total_primero = self.obtener_distancia_total(primer_trayecto)
-        total_segundo = self.obtener_distancia_total(segundo_trayecto)
-        print(primer_trayecto + ": " + self.formatear_distancia(total_primero))
-        print(segundo_trayecto + ": " + self.formatear_distancia(total_segundo))
+        total_primero = self.obtener_distancia_total(self, primer_trayecto)
+        total_segundo = self.obtener_distancia_total(self, segundo_trayecto)
+        print(primer_trayecto + ": " + self.formatear_distancia(self, total_primero))
+        print(segundo_trayecto + ": " + self.formatear_distancia(self, total_segundo))
         if total_primero < total_segundo:
-            print("Diferencia: " + self.formatear_tiempo(total_segundo - total_primero))
+            print("Diferencia: " + self.formatear_distancia(self, total_segundo - total_primero))
         else:
-            print("Diferencia: " + self.formatear_tiempo(total_primero - total_segundo))
+            print("Diferencia: " + self.formatear_distancia(self, total_primero - total_segundo))
+
+    def comparar_trayectos_por_tiempo(self, primer_trayecto, segundo_trayecto):
+        total_primero = self.obtener_tiempo_total(self, primer_trayecto)
+        total_segundo = self.obtener_tiempo_total(self, segundo_trayecto)
+        print(primer_trayecto + ": " + self.formatear_tiempo(self, total_primero))
+        print(segundo_trayecto + ": " + self.formatear_tiempo(self, total_segundo))
+        if total_primero < total_segundo:
+            print("Diferencia: " + self.formatear_tiempo(self, total_segundo - total_primero))
+        else:
+            print("Diferencia: " + self.formatear_tiempo(self, total_primero - total_segundo))
 
     def ver_trayecto(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
-        print(nombre_trayecto + ": " + trayecto)
-        print("Distancia: " + self.formatear_distancia(self.obtener_distancia_total(trayecto)))
-        print("Tiempo estimado de viaje: " + self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto)))
+        print(nombre_trayecto + ": " + str(trayecto))
+        print("Distancia: " + self.formatear_distancia(self, self.obtener_distancia_total(self, nombre_trayecto)))
+        print("Tiempo estimado de viaje: " + self.formatear_tiempo(self,
+                                                                   self.obtener_tiempo_total(self, nombre_trayecto)))
 
     def listar_trayectos(self):
         print(self.trayectos.keys())
@@ -77,37 +90,38 @@ class MotorDeRutas(ControladorBase):
     def listar_rutas(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
         for i in range(0, len(trayecto) - 1):
-            ruta = self.unir_origen_destino(trayecto[i], trayecto[i + 1])
+            ruta = self.unir_origen_destino(self, trayecto[i], trayecto[i + 1])
             print(ruta)
-            print(self.formatear_distancia(self.rutas[ruta][0]))
-            print(self.formatear_tiempo(self.rutas[ruta][1]))
+            print(self.formatear_distancia(self, self.rutas[ruta][0]))
+            print(self.formatear_tiempo(self, self.rutas[ruta][1]))
 
     def salir_y_guardar_trayectos(self):
         """Todavia no probe el exit"""
-        try:
-            open(os.getcwd()[:-13] + r"storage\Trayectos.json", "w").write(json.dump(self.trayectos))
-            open(os.getcwd()[:-13] + r"storage\Rutas.json", "w").write(json.dump(self.rutas))
+        # try:
+        open(os.getcwd()[:-13] + r"storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
+        open(os.getcwd()[:-13] + r"storage\Rutas.json", "w").write(json.dumps(self.rutas))
 
-            exit()
-        except:
-            print("Error al guardar")
+        exit()
+        # except:
 
     def crear_ruta(self, origen, destino):
         """Crea una nueva ruta si no esta presente en el diccionario
 
         si no puede crear la ruta tira una excepcion
         """
-        if (origen == destino):
-            raise "las ciudades deben ser distintas"
-        nombre_de_ruta = self.unir_origen_destino(origen, destino)
+        if origen == destino:
+            print("las ciudades deben ser distintas")
+            return
+        nombre_de_ruta = self.unir_origen_destino(self, origen, destino)
         if not nombre_de_ruta in self.rutas.keys():
             try:
-                matriz = googlemaps.distance_matrix(origen, destino)
+                matriz = self.controlador_google.distance_matrix(origen, destino)
                 ruta = (matriz['rows'][0]['elements'][0]['duration']['value'],
                         matriz['rows'][0]['elements'][0]['distance']['value'])
-                self.rutas[self.unir_origen_destino(origen, destino)] = ruta
+                self.rutas[self.unir_origen_destino(self, origen, destino)] = ruta
             except:
-                raise "no se ha podido crear la ruta"
+                # no se ha podido crear la ruta
+                raise
 
     def unir_origen_destino(self, origen, destino):
         return origen + "-" + destino
@@ -119,14 +133,14 @@ class MotorDeRutas(ControladorBase):
         trayecto = self.trayectos[nombre]
         total = 0
         for i in range(0, len(trayecto) - 1):
-            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][0]
+            total += self.rutas[self.unir_origen_destino(self, trayecto[i], trayecto[i + 1])][0]
         return total
 
     def obtener_distancia_total(self, nombre):
         trayecto = self.trayectos[nombre]
         total = 0
         for i in range(0, len(trayecto) - 1):
-            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][1]
+            total += self.rutas[self.unir_origen_destino(self, trayecto[i], trayecto[i + 1])][1]
         return total
 
     def formatear_tiempo(self, tiempo):
@@ -141,3 +155,18 @@ class MotorDeRutas(ControladorBase):
     def formatear_distancia(self, distancia):
         d = distancia / 1000000
         return "{0:8.4f} km".format(d)
+
+
+if __name__ == '__main__':
+    motor = MotorDeRutas
+    motor.crear_trayecto(motor, "Mi Trayecto", "Buenos Aires", "La Plata")
+    motor.agregar_ciudad_final(motor, "Mi Trayecto", "Santiago Del Estero")
+    motor.crear_trayecto(motor, "Mi Trayecto 2", "Rosario", "La Pampa")
+    motor.concatenar_trayectos(motor, "Mi Trayecto Concatenado", "Mi Trayecto", "Mi Trayecto 2")
+    motor.comparar_trayectos_por_distancia(motor, "Mi Trayecto", "Mi Trayecto 2")
+    motor.comparar_trayectos_por_tiempo(motor, "Mi Trayecto", "Mi Trayecto 2")
+    motor.agregar_ciudad_intermedia(motor, "Mi Trayecto Concatenado", "Chubut", 1)
+    motor.ver_trayecto(motor, "Mi Trayecto")
+    motor.listar_trayectos(motor)
+    motor.listar_rutas(motor, "Mi Trayecto")
+    motor.salir_y_guardar_trayectos(motor)
