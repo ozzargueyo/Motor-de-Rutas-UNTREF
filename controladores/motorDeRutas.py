@@ -42,8 +42,14 @@ class MotorDeRutas(ControladorBase):
         """Agrega una ruta entre las ciudades indice - 1 indice y indice + 1 si es posible"""
         trayecto = self.trayectos[nombre_trayecto]
         if int(indice) > 0:
+            if ciudad == trayecto[int(indice) - 1]:
+                print("no se puede crear un trayecto desde y hacia la misma ciudad")
+                return
             self.crear_ruta(trayecto[indice - 1], ciudad)
         if int(indice) < len(trayecto):
+            if ciudad == trayecto[int(indice)]:
+                print("no se puede crear un trayecto desde y hacia la misma ciudad")
+                return
             self.crear_ruta(ciudad, trayecto[indice])
         trayecto.insert(indice, ciudad)
 
@@ -91,8 +97,8 @@ class MotorDeRutas(ControladorBase):
         for i in range(0, len(trayecto) - 1):
             ruta = self.unir_origen_destino(trayecto[i], trayecto[i + 1])
             print(ruta)
-            print(self.formatear_distancia(self.rutas[ruta][0]))
-            print(self.formatear_tiempo(self.rutas[ruta][1]))
+            print(self.formatear_distancia(self.rutas[ruta][1]))
+            print(self.formatear_tiempo(self.rutas[ruta][0]))
 
     def salir_y_guardar_trayectos(self):
         """Todavia no probe el exit"""
@@ -132,14 +138,14 @@ class MotorDeRutas(ControladorBase):
         trayecto = self.trayectos[nombre]
         total = 0
         for i in range(0, len(trayecto) - 1):
-            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][0]
+            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][1]
         return total
 
     def obtener_distancia_total(self, nombre):
         trayecto = self.trayectos[nombre]
         total = 0
         for i in range(0, len(trayecto) - 1):
-            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][1]
+            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][0]
         return total
 
     def formatear_tiempo(self, tiempo):
@@ -152,8 +158,8 @@ class MotorDeRutas(ControladorBase):
         return "{0:2d} dias, {1:2d} horas, {2:2d} min".format(dias, horas, minutos)
 
     def formatear_distancia(self, distancia):
-        d = distancia / 1000000
-        return "{0:8.4f} km".format(d)
+        d = distancia / 1000
+        return "{0:8.2f} km".format(d)
 
 
 if __name__ == '__main__':
