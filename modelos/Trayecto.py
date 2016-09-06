@@ -1,12 +1,14 @@
 from modelos import Model
 
-class Trayecto(Model):
 
-    def __init__(self):
-        super(Trayecto, self).__init__("trayectos")
-        self.nombre = ""
-        self.rutaInicial = None
-        self.distanciaTotal = None
-        self.tiempoTotal = None
+def CREAR_TRAYECTO(ciudades):
+    """METODO TEMPORAL
+                    no podia crear una instancia de la clase desde motor de Rutas.
+                         eliminar
+    """
+    return Trayecto(ciudades)
 
-    def __tojson__(self):
+
+class Trayecto():
+    def __init__(self, ciudades):
+        self.ciudades = ciudades

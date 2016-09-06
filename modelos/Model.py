@@ -1,5 +1,5 @@
 import os
-class Model(Object):
+class Model(object):
     def __init__(self , collection):
         self.id = None
         dir_path = os.path.dirname(__file__)

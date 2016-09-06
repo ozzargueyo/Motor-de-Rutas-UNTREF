@@ -1,5 +1,5 @@
-from cursesmenu import *
-from cursesmenu.items import *
+#from cursesmenu import *
+#from cursesmenu.items import *
 from controladores.motorDeRutas import *
 class Menues(object):
     def __init__(self, motor):
