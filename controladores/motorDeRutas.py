@@ -96,7 +96,6 @@ class MotorDeRutas(ControladorBase):
                 info += ciudad + " - "
             info = info[:-3] + "."
             print(info)
-            print()
 
     def listar_rutas(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]

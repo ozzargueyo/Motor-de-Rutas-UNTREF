@@ -53,7 +53,6 @@ class Menu():
                     'Escriba "si" si la ciudad que usted eligio es: ' + nombre + ' o esciba "no" para reescribir el nombre \n').casefold()
                 print(seleccion)
                 ciudad_incorrecta = "si" not in seleccion
-        print(nombre)
         return nombre
 
     def seleccionar_trayecto(self):
