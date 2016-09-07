@@ -8,4 +8,4 @@ motor = motorDeRutas.MotorDeRutas()
 menu = Menu.Menu(motor)
 
 while en_ejecucion:
-    print(menu.elejir_operacion())
+    menu.elejir_operacion()

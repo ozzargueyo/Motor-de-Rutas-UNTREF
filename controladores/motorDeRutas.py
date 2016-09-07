@@ -90,7 +90,13 @@ class MotorDeRutas(ControladorBase):
         print("Tiempo estimado de viaje: " + self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto)))
 
     def listar_trayectos(self):
-        print(self.trayectos.keys())
+        for trayecto in self.trayectos.keys():
+            info = trayecto + ": " + (30 - len(trayecto)) * " "
+            for ciudad in self.trayectos[trayecto]:
+                info += ciudad + " - "
+            info = info[:-3] + "."
+            print(info)
+            print()
 
     def listar_rutas(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
@@ -103,8 +109,8 @@ class MotorDeRutas(ControladorBase):
     def salir_y_guardar_trayectos(self):
         """Todavia no probe el exit"""
         # try:
-        open(os.getcwd()[:-13] + r"storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
-        open(os.getcwd()[:-13] + r"storage\Rutas.json", "w").write(json.dumps(self.rutas))
+        open(os.getcwd() + r"\storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
+        open(os.getcwd() + r"\storage\Rutas.json", "w").write(json.dumps(self.rutas))
 
         exit()
         # except:
