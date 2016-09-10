@@ -1,10 +1,11 @@
 #La aplicacion se corre desde aca
-from vistas import Menu
+#importamos una clase Menu que es un Singleton llamado menu
+from vistas.Menu import menu
 
-from controladores import motorDeRutas
 
-motor = motorDeRutas.MotorDeRutas()
-menu = Menu.Menu(motor)
+while not menu.terminar:
+    menu.elegir_operacion()
 
-while True:
-    menu.elejir_operacion()
+
+if menu.terminar:
+    menu.mensajeDeSalida()

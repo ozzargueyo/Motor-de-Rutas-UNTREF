@@ -1,5 +1,4 @@
 from controladores.controladorBase import ControladorBase
-# from vistas.menues import *
 import json
 import os
 import googlemaps
@@ -12,8 +11,8 @@ class MotorDeRutas(ControladorBase):
 
     def __init__(self):
         super().__init__()
-        # self.menus = Menues(self)
         # try:
+
         self.trayectos = json.load(open(os.getcwd() + "\storage\Trayectos.json", "r"))
         self.rutas = json.load(open(os.getcwd() + "\storage\Rutas.json", "r"))
         # except:
@@ -111,7 +110,8 @@ class MotorDeRutas(ControladorBase):
         open(os.getcwd() + r"\storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
         open(os.getcwd() + r"\storage\Rutas.json", "w").write(json.dumps(self.rutas))
 
-        exit()
+        from vistas.Menu import menu
+        menu.terminar = True
         # except:
 
     def crear_ruta(self, origen, destino):
@@ -129,9 +129,9 @@ class MotorDeRutas(ControladorBase):
                 ruta = (matriz['rows'][0]['elements'][0]['duration']['value'],
                         matriz['rows'][0]['elements'][0]['distance']['value'])
                 self.rutas[self.unir_origen_destino(origen, destino)] = ruta
-            except:
+            except Exception as e:
                 # no se ha podido crear la ruta
-                raise
+                print(e)
 
     def unir_origen_destino(self, origen, destino):
         return origen + "-" + destino
