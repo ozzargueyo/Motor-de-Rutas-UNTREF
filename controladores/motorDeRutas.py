@@ -1,27 +1,26 @@
 from controladores.controladorBase import ControladorBase
-import json
-import os
-import googlemaps
+from librerias import gmaps
+from modelos.Trayecto import Trayecto
+from modelos.Ruta import Ruta
 
 
 class MotorDeRutas(ControladorBase):
+    trayectosModel = Trayecto()
+    rutasModel = Ruta()
     trayectos = {}
     rutas = {}
-    controlador_google = googlemaps.Client(key="AIzaSyDjhMhoPyvD7P4elZoBoVmVu3bGMT4be1Y")
 
     def __init__(self):
         super().__init__()
         # try:
 
-        self.trayectos = json.load(open(os.getcwd() + "\storage\Trayectos.json", "r"))
-        self.rutas = json.load(open(os.getcwd() + "\storage\Rutas.json", "r"))
+        self.trayectos = self.trayectosModel.get()
+        self.rutas = self.rutasModel.get()
+        #self.rutas = json.load(open(os.getcwd() + "\storage\Rutas.json", "r"))
+
         # except:
         #  print(
         #        "Error al recuperar los trayectos almacenados, la aplicacion seguira funcionando con trayectos nuevos")
-
-    def run(self):
-        # self.menus.mainMenu()
-        pass
 
     def crear_trayecto(self, nombre_trayecto, origen, destino):
         """Crea un nuevo trayecto con un nombre determinado a partir de dos ciudades
@@ -107,8 +106,11 @@ class MotorDeRutas(ControladorBase):
     def salir_y_guardar_trayectos(self):
         """Todavia no probe el exit"""
         # try:
-        open(os.getcwd() + r"\storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
-        open(os.getcwd() + r"\storage\Rutas.json", "w").write(json.dumps(self.rutas))
+        self.trayectosModel.toJson(self.trayectos)
+        self.rutasModel.toJson(self.rutas)
+
+        #open(os.getcwd() + r"\storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
+        #open(os.getcwd() + r"\storage\Rutas.json", "w").write(json.dumps(self.rutas))
 
         from vistas.Menu import menu
         menu.terminar = True
@@ -125,7 +127,7 @@ class MotorDeRutas(ControladorBase):
         nombre_de_ruta = self.unir_origen_destino(origen, destino)
         if nombre_de_ruta not in self.rutas.keys():
             try:
-                matriz = self.controlador_google.distance_matrix(origen, destino)
+                matriz = gmaps.distance_matrix(origen, destino)
                 ruta = (matriz['rows'][0]['elements'][0]['duration']['value'],
                         matriz['rows'][0]['elements'][0]['distance']['value'])
                 self.rutas[self.unir_origen_destino(origen, destino)] = ruta
@@ -167,7 +169,7 @@ class MotorDeRutas(ControladorBase):
         return "{0:8.2f} km".format(d)
 
     def obtener_nombre_correcto(self, ciudad):
-        return (self.controlador_google.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0])
+        return (gmaps.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0])
 
 
 # CON LOS CAMBIOS ESTE TEST YA NO SE PUEDE EJECUTAR DESDE ACA

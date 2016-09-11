@@ -1,13 +1,8 @@
-from modelos import Model
+from modelos.Model import Model
 
-def CREAR_RUTA(duracion, distancia):
-    """METODO TEMPORAL
-                    no podia crear una instancia de la clase desde motor de Rutas.
-                         eliminar
-    """
-    return Ruta(duracion, distancia)
 
-class Ruta():
-    def __init__(self, duracion, distancia):
+class Ruta(Model):
+    def __init__(self, duracion = None, distancia = None):
+        super().__init__("Rutas")
         self.distancia = distancia
         self.duracion = duracion

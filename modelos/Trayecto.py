@@ -1,14 +1,7 @@
-from modelos import Model
+from modelos.Model import Model
 
 
-def CREAR_TRAYECTO(ciudades):
-    """METODO TEMPORAL
-                    no podia crear una instancia de la clase desde motor de Rutas.
-                         eliminar
-    """
-    return Trayecto(ciudades)
+class Trayecto(Model):
 
-
-class Trayecto():
-    def __init__(self, ciudades):
-        self.ciudades = ciudades
+    def __init__(self):
+        super().__init__("Trayectos")

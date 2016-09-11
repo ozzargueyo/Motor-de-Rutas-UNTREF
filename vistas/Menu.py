@@ -1,5 +1,5 @@
 from controladores import motorDeRutas
-from terminaltables import AsciiTable, DoubleTable
+from terminaltables import DoubleTable
 import os
 
 class Menu(object):
@@ -47,6 +47,8 @@ class Menu(object):
                 continuarConMotor = input()
                 if continuarConMotor == "N":
                     self.menus_disponibles[6]()
+                else:
+                    self.clear()
         except :
             print("Ocurrio un error")
 
@@ -165,7 +167,7 @@ class Menu(object):
         exit()
 
     def clear(self):
-        os.system('clear')
+        os.system('cls' if os.name=='nt' else 'clear')
 
 
 

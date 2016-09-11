@@ -1,24 +1,12 @@
-import os
+import os , json
 class Model(object):
     def __init__(self , collection):
         self.id = None
         dir_path = os.path.dirname(__file__)
         self.collection = os.path.join(dir_path , "../storage/"+collection+".json")
 
-    def getById(self):
-        pass
+    def get(self):
+        return json.load(open(self.collection, "r"))
 
-    def getAll(self):
-        pass
-
-    def save(self):
-        pass
-
-    def delete(self):
-        pass
-
-    def toJson(self):
-        pass
-
-    def toModel(self):
-        pass
+    def toJson(self, dict):
+        open(self.collection, "w").write(json.dumps(dict))
