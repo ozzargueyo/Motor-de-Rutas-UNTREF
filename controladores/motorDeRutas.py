@@ -1,5 +1,5 @@
 from controladores.controladorBase import ControladorBase
-from librerias import gmaps
+from librerias.gmaps import gmaps
 from modelos.Trayecto import Trayecto
 from modelos.Ruta import Ruta
 
@@ -93,9 +93,6 @@ class MotorDeRutas(ControladorBase):
 
         return dataTrayecto
 
-        print(nombre_trayecto + ": " + str(trayecto))
-        print("Distancia: " + self.formatear_distancia(self.obtener_distancia_total(nombre_trayecto)))
-        print("Tiempo estimado de viaje: " + self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto)))
 
     def listar_trayectos(self):
         for trayecto in self.trayectos.keys():
