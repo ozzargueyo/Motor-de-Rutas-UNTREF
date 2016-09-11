@@ -83,6 +83,16 @@ class MotorDeRutas(ControladorBase):
 
     def ver_trayecto(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
+
+        dataTrayecto = [
+                        nombre_trayecto,
+                        "->".join(trayecto),
+                        self.formatear_distancia(self.obtener_distancia_total(nombre_trayecto)),
+                        self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto))
+        ]
+
+        return dataTrayecto
+
         print(nombre_trayecto + ": " + str(trayecto))
         print("Distancia: " + self.formatear_distancia(self.obtener_distancia_total(nombre_trayecto)))
         print("Tiempo estimado de viaje: " + self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto)))

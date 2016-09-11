@@ -41,14 +41,7 @@ class Menu(object):
             print("\nOperacion seleccionada:" , self.operaciones[op] , "\n" )
             self.menus_disponibles[op]()
 
-            if op != 6:
-                print("¿Desea continuar operando con el Motor de Rutas?"
-                                          "\n Oprima [Enter] para continuar o [N] para salir:" )
-                continuarConMotor = input()
-                if continuarConMotor == "N":
-                    self.menus_disponibles[6]()
-                else:
-                    self.clear()
+            self.continuarOperacion(op)
         except :
             print("Ocurrio un error")
 
@@ -75,8 +68,12 @@ class Menu(object):
         """MENU PARA OBTENER INFORMACION DE UN TARYECTO SELECCIONADO"""
         #self.motor.ver_trayecto(self.seleccionar_trayecto())
         op = self.seleccionar_trayecto()
-        self.motor.ver_trayecto(op)
-        #self.motor.seleccionarTrayecto()
+        data_trayecto = self.motor.ver_trayecto(op)
+        table_data = [["Nombre" , "Ciudades del Trayecto" , "Distancia en Kms" , "Tiempo estimado de viaje"]]
+        table_data.append(data_trayecto)
+        table = DoubleTable(table_data, "Ver Informacion de Trayecto seleccionado ")
+        table.justify_columns = {0: 'center'}
+        print(table.table)
 
     def listar_trayectos(self):
 
@@ -149,7 +146,7 @@ class Menu(object):
 
         table = DoubleTable(table_data, title)
         table.justify_columns = {0: 'center', 1: 'left'}
-        print(table.table)
+        print(table.table , "\n")
         while posicion == -1:
             try:
                 numero = int(input("Ingese la opción que desea:"))
@@ -169,6 +166,15 @@ class Menu(object):
     def clear(self):
         os.system('cls' if os.name=='nt' else 'clear')
 
+    def continuarOperacion(self , op):
+        if op != 6:
+            print("¿Desea continuar operando con el Motor de Rutas?"
+                                      "\n Oprima [Enter] para continuar o [N] para salir:" )
+            continuarConMotor = str(input())
+            if continuarConMotor.upper() == "N":
+                self.menus_disponibles[6]()
+            else:
+                self.clear()
 
 
 menu = Menu()
