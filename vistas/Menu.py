@@ -42,7 +42,7 @@ class Menu(object):
             self.menus_disponibles[op]()
 
             self.continuarOperacion(op)
-        except :
+        except IndentationError:
             print("Ocurrio un error")
 
     def crear_trayecto(self):
@@ -92,20 +92,41 @@ class Menu(object):
         """MENU PARA COMPARAR DOS TRAYECTOS EXISTENTES"""
         pass
 
-    def obtener_nombre_de_ciudad(self, texto):
-        """METODO PROVISIONAL PARA VALIDAR EL NOMBRE DE LA CIUDAD"""
-        ciudad_incorrecta = True
-        nombre = ""
-        while ciudad_incorrecta:
-            ciudad = input("Inserte nombre de la ciudad " + texto + " \n")
-            # nombre = self.motor.obtener_nombre_correcto(ciudad)
-            nombre = ciudad
-            seleccion = ""
-            while ("si" not in seleccion and "no" not in seleccion):
-                seleccion = input(
-                    'Escriba "si" si la ciudad que usted eligio es: ' + nombre + ' o esciba "no" para reescribir el nombre \n').casefold()
-                ciudad_incorrecta = "si" not in seleccion
-        return nombre
+    def seleccionarCiudadesValidas(self , term , tipo_ciudad):
+
+        ciudades_posibles =self.motor.obtener_ciudades_posibles(term)
+
+        posicion = -1
+        table_data = [["Opcion" , "Ciudades"]]
+        for id , ciudad in sorted(ciudades_posibles.items()):
+            table_data.append([ id , ciudad ])
+
+        table = DoubleTable(table_data, "Seleccion de ciudades disponibles")
+        table.justify_columns = {0: 'center', 1: 'left'}
+        print(table.table , "\n")
+        while posicion == -1:
+            try:
+                print('Confirme la opción de la ciudad ingresada. Oprima 0 (Cero) para ingresarla nuevamente.')
+                numero = int(input("Número de opción correcta: "))
+                if numero == 0:
+                   self.obtener_nombre_de_ciudad(tipo_ciudad)
+                   break
+                elif numero >= 1 and len(ciudades_posibles) >= numero:
+                    posicion = numero
+                else:
+                    print("Debe ingresar un numero entre 1 y " + str(len(ciudades_posibles)))
+            except:
+                print("Debe ingresar un numero entre 1 y " + str(len(ciudades_posibles)))
+
+        return ciudades_posibles[posicion]
+
+
+    def obtener_nombre_de_ciudad(self, tipo_ciudad):
+        ciudad = input("Ingrese nombre de la ciudad de" + tipo_ciudad + ": ")
+
+        ciudadSeleccionada = self.seleccionarCiudadesValidas(ciudad , tipo_ciudad)
+
+        return ciudadSeleccionada
 
     def seleccionar_trayecto(self):
 

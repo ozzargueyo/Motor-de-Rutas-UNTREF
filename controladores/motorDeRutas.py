@@ -178,8 +178,19 @@ class MotorDeRutas(ControladorBase):
     def obtener_nombre_correcto(self, ciudad):
         return (gmaps.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0])
 
+    def obtener_ciudades_posibles(self, ciudad):
+        data_ciudades = gmaps.places_autocomplete(ciudad, language="es")
+        ciudades_posibles = {}
+        index = 1
+        if len(data_ciudades) > 0:
+            for ciudad in data_ciudades:
+                ciudades_posibles[index] = ciudad["description"]
+                index += 1
 
-# CON LOS CAMBIOS ESTE TEST YA NO SE PUEDE EJECUTAR DESDE ACA
+        return ciudades_posibles
+
+
+# YA SE PUEDE VOLVER A EJECUTAR ESTE TEST
 if __name__ == '__main__':
     motor = MotorDeRutas()
     motor.crear_trayecto("Mi Trayecto", "Buenos Aires", "La Plata")
