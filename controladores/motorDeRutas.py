@@ -1,26 +1,17 @@
-from controladores.controladorBase import ControladorBase
 from librerias.gmaps import gmaps
 from modelos.Trayecto import Trayecto
 from modelos.Ruta import Ruta
 
 
-class MotorDeRutas(ControladorBase):
+class MotorDeRutas():
     trayectosModel = Trayecto()
     rutasModel = Ruta()
     trayectos = {}
     rutas = {}
 
     def __init__(self):
-        super().__init__()
-        # try:
-
         self.trayectos = self.trayectosModel.get()
         self.rutas = self.rutasModel.get()
-        #self.rutas = json.load(open(os.getcwd() + "\storage\Rutas.json", "r"))
-
-        # except:
-        #  print(
-        #        "Error al recuperar los trayectos almacenados, la aplicacion seguira funcionando con trayectos nuevos")
 
     def crear_trayecto(self, nombre_trayecto, origen, destino):
         """Crea un nuevo trayecto con un nombre determinado a partir de dos ciudades
@@ -84,23 +75,14 @@ class MotorDeRutas(ControladorBase):
     def ver_trayecto(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
 
-        dataTrayecto = [
-                        nombre_trayecto,
-                        "->".join(trayecto),
-                        self.formatear_distancia(self.obtener_distancia_total(nombre_trayecto)),
-                        self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto))
+        data_trayecto = [
+            nombre_trayecto,
+            "->".join(trayecto),
+            self.formatear_distancia(self.obtener_distancia_total(nombre_trayecto)),
+            self.formatear_tiempo(self.obtener_tiempo_total(nombre_trayecto))
         ]
 
-        return dataTrayecto
-
-
-    def listar_trayectos(self):
-        for trayecto in self.trayectos.keys():
-            info = trayecto + ": " + (30 - len(trayecto)) * " "
-            for ciudad in self.trayectos[trayecto]:
-                info += ciudad + " - "
-            info = info[:-3] + "."
-            print(info)
+        return data_trayecto
 
     def listar_rutas(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
@@ -111,17 +93,10 @@ class MotorDeRutas(ControladorBase):
             print(self.formatear_tiempo(self.rutas[ruta][0]))
 
     def salir_y_guardar_trayectos(self):
-        """Todavia no probe el exit"""
-        # try:
         self.trayectosModel.toJson(self.trayectos)
         self.rutasModel.toJson(self.rutas)
-
-        #open(os.getcwd() + r"\storage\Trayectos.json", "w").write(json.dumps(self.trayectos))
-        #open(os.getcwd() + r"\storage\Rutas.json", "w").write(json.dumps(self.rutas))
-
         from vistas.Menu import menu
         menu.terminar = True
-        # except:
 
     def crear_ruta(self, origen, destino):
         """Crea una nueva ruta si no esta presente en el diccionario
@@ -176,7 +151,7 @@ class MotorDeRutas(ControladorBase):
         return "{0:8.2f} km".format(d)
 
     def obtener_nombre_correcto(self, ciudad):
-        return (gmaps.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0])
+        return gmaps.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0]
 
     def obtener_ciudades_posibles(self, ciudad):
         data_ciudades = gmaps.places_autocomplete(ciudad, language="es")
@@ -188,19 +163,3 @@ class MotorDeRutas(ControladorBase):
                 index += 1
 
         return ciudades_posibles
-
-
-# YA SE PUEDE VOLVER A EJECUTAR ESTE TEST
-if __name__ == '__main__':
-    motor = MotorDeRutas()
-    motor.crear_trayecto("Mi Trayecto", "Buenos Aires", "La Plata")
-    motor.agregar_ciudad_final("Mi Trayecto", "Santiago Del Estero")
-    motor.crear_trayecto("Mi Trayecto 2", "Rosario", "La Pampa")
-    motor.concatenar_trayectos("Mi Trayecto Concatenado", "Mi Trayecto", "Mi Trayecto 2")
-    motor.comparar_trayectos_por_distancia("Mi Trayecto", "Mi Trayecto 2")
-    motor.comparar_trayectos_por_tiempo("Mi Trayecto", "Mi Trayecto 2")
-    motor.agregar_ciudad_intermedia("Mi Trayecto Concatenado", "Chubut", 1)
-    motor.ver_trayecto("Mi Trayecto")
-    motor.listar_trayectos()
-    motor.listar_rutas("Mi Trayecto")
-    motor.salir_y_guardar_trayectos()
