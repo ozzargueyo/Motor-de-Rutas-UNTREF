@@ -154,7 +154,7 @@ class MotorDeRutas():
         return gmaps.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0]
 
     def obtener_ciudades_posibles(self, ciudad):
-        data_ciudades = gmaps.places_autocomplete(ciudad, language="es")
+        data_ciudades = gmaps.places_autocomplete(ciudad, type="(cities)", language="es")
         ciudades_posibles = {}
         index = 1
         if len(data_ciudades) > 0:
