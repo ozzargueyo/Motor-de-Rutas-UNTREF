@@ -46,26 +46,43 @@ class Menu(object):
 
     def crear_trayecto(self):
         """MENU PARA CREAR UN NUEVO TRAYECTO"""
-        nombre = input("Inserte nombre del nuevo trayecto: ")
+        nombre_trayecto = ""
+        while (nombre_trayecto in self.motor.trayectos.keys() or nombre_trayecto == ""):
+            nombre_trayecto = input("Inserte nombre del nuevo trayecto: ").strip()
+            if (nombre_trayecto in self.motor.trayectos.keys()):
+                print("Ya existe un trayecto con ese nombre")
+            elif (nombre_trayecto == ""):
+                print("El nombre del trayecto no puede ser vacio")
         origen = self.obtener_nombre_de_ciudad("de origen")
         destino = self.obtener_nombre_de_ciudad("de destino")
-        self.motor.crear_trayecto(nombre, origen, destino)
+        self.motor.crear_trayecto(nombre_trayecto, origen, destino)
         self.clear()
 
     def agregar_ciudad(self):
         """MENU PARA AÑADIR CIUDAD"""
-        trayecto = self.seleccionar_trayecto()
-        self.motor.ver_trayecto(trayecto)
+        trayecto = self.motor.trayectos[self.seleccionar_trayecto()]
         posicion = -1
-        ciudad = self.obtener_nombre_de_ciudad("a añadir")
-        # while posicion == -1:
-        #    respuesta = input("Elija la posicion de la nueva cuidad \n")
-        #
-        pass
+        table_data = [["Opcion", "Ciudad origen- Ciudad destino"]]
+        table_data.append([1, "Primer Lugar"])
+        for i in range(0, len(trayecto) - 1):
+            table_data.append([i + 2, self.motor.unir_origen_destino(trayecto[i], trayecto[i + 1])])
+        table_data.append([len(trayecto) + 1, "Ultimo Lugar"])
+        table = DoubleTable(table_data, "Seleccion de posicion")
+        table.justify_columns = {0: 'center', 1: 'left'}
+        print(table.table, "\n")
+        while posicion == -1:
+            try:
+                numero = int(input("Seleccione la posicion a insertar la nueva ciudad."))
+                if numero >= 1 and len(trayecto) + 1 >= numero:
+                    posicion = numero - 1
+                else:
+                    print("Debe ingresar un numero entre 1 y " + str(len(trayecto)))
+            except:
+                print("Debe ingresar un numero entre 1 y " + str(len(trayecto)))
+        self.motor.agregar_ciudad_intermedia(trayecto, self.obtener_nombre_de_ciudad("a añadir"), posicion)
 
     def info_trayecto(self):
         """MENU PARA OBTENER INFORMACION DE UN TARYECTO SELECCIONADO"""
-        # self.motor.ver_trayecto(self.seleccionar_trayecto())
         op = self.seleccionar_trayecto()
         data_trayecto = self.motor.ver_trayecto(op)
         table_data = [["Nombre", "Ciudades del Trayecto", "Distancia en Kms", "Tiempo estimado de viaje"]]
@@ -108,8 +125,7 @@ class Menu(object):
                 print('Confirme la opción de la ciudad ingresada. Oprima 0 (Cero) para ingresarla nuevamente.')
                 numero = int(input("Número de opción correcta: "))
                 if numero == 0:
-                    self.obtener_nombre_de_ciudad(tipo_ciudad)
-                    break
+                    return self.obtener_nombre_de_ciudad(tipo_ciudad)
                 elif numero >= 1 and len(ciudades_posibles) >= numero:
                     posicion = numero
                 else:
@@ -120,7 +136,7 @@ class Menu(object):
         return ciudades_posibles[posicion]
 
     def obtener_nombre_de_ciudad(self, tipo_ciudad):
-        ciudad = input("Ingrese nombre de la ciudad de" + tipo_ciudad + ": ")
+        ciudad = input("Ingrese nombre de la ciudad " + tipo_ciudad + ": ")
 
         ciudadSeleccionada = self.seleccionarCiudadesValidas(ciudad, tipo_ciudad)
 

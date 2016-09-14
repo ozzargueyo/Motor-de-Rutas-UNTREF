@@ -3,33 +3,27 @@ from modelos.Trayecto import Trayecto
 from modelos.Ruta import Ruta
 
 
-class MotorDeRutas():
+class MotorDeRutas:
     trayectosModel = Trayecto()
     rutasModel = Ruta()
     trayectos = {}
     rutas = {}
 
     def __init__(self):
-        self.trayectos = self.trayectosModel.get()
-        self.rutas = self.rutasModel.get()
+        try:
+            self.trayectos = self.trayectosModel.get()
+            self.rutas = self.rutasModel.get()
+        except:
+            print("Error al cargar datos guardados, la aplicacion seguira funcionando con trayectos nuevos")
 
     def crear_trayecto(self, nombre_trayecto, origen, destino):
-        """Crea un nuevo trayecto con un nombre determinado a partir de dos ciudades
-
-        DEBE RECIBIR EL NOMBRE DE LAS CIUDADES COMO ESTAN ESCRITAS EN GOOGLEMAPS MATRIX ADDRESSES
-
-        en caso de que ya exista un trayecto con ese nombre levanta una exepcion
-        """
-        if nombre_trayecto in self.trayectos.keys():
-            print("ya existe un trayecto con ese nombre")
-            return
+        """Crea un nuevo trayecto con un nombre determinado a partir de dos ciudades"""
         self.crear_ruta(origen, destino)
         ciudades = [origen, destino]
         self.trayectos[nombre_trayecto] = ciudades
 
-    def agregar_ciudad_intermedia(self, nombre_trayecto, ciudad, indice):
+    def agregar_ciudad_intermedia(self, trayecto, ciudad, indice):
         """Agrega una ruta entre las ciudades indice - 1 indice y indice + 1 si es posible"""
-        trayecto = self.trayectos[nombre_trayecto]
         if int(indice) > 0:
             if ciudad == trayecto[int(indice) - 1]:
                 print("no se puede crear un trayecto desde y hacia la misma ciudad")
@@ -41,9 +35,6 @@ class MotorDeRutas():
                 return
             self.crear_ruta(ciudad, trayecto[indice])
         trayecto.insert(indice, ciudad)
-
-    def agregar_ciudad_final(self, nombre_trayecto, ciudad):
-        self.agregar_ciudad_intermedia(nombre_trayecto, ciudad, len(self.trayectos[nombre_trayecto]))
 
     def concatenar_trayectos(self, nuevo_trayecto, primer_trayecto, segundo_trayecto):
         if nuevo_trayecto in self.trayectos.keys():
@@ -127,24 +118,30 @@ class MotorDeRutas():
         trayecto = self.trayectos[nombre]
         total = 0
         for i in range(0, len(trayecto) - 1):
-            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][1]
+            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][0]
         return total
 
     def obtener_distancia_total(self, nombre):
         trayecto = self.trayectos[nombre]
         total = 0
         for i in range(0, len(trayecto) - 1):
-            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][0]
+            total += self.rutas[self.unir_origen_destino(trayecto[i], trayecto[i + 1])][1]
         return total
 
     def formatear_tiempo(self, tiempo):
+        respuesta = ""
         t = tiempo
         dias = int(t / 24 / 60 / 60)
+        if dias != 0:
+            respuesta += "{0:2d} dias,".format(dias)
         t -= dias * 24 * 60 * 60
         horas = int(t / 60 / 60)
+        if dias != 0 or horas != 0:
+            respuesta += "{0:2d} horas,".format(horas)
         t -= horas * 60 * 60
         minutos = int(t / 60)
-        return "{0:2d} dias, {1:2d} horas, {2:2d} min".format(dias, horas, minutos)
+        respuesta += "{0:2d} min".format(minutos)
+        return respuesta
 
     def formatear_distancia(self, distancia):
         d = distancia / 1000
