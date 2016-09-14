@@ -1,6 +1,9 @@
 from librerias.gmaps import gmaps
 from modelos.Trayecto import Trayecto
 from modelos.Ruta import Ruta
+from terminaltables import DoubleTable
+import exepciones
+from exepciones.MISMACIUDAD import MISMACIUDAD
 
 
 class MotorDeRutas:
@@ -18,50 +21,51 @@ class MotorDeRutas:
 
     def crear_trayecto(self, nombre_trayecto, origen, destino):
         """Crea un nuevo trayecto con un nombre determinado a partir de dos ciudades"""
-        self.crear_ruta(origen, destino)
-        ciudades = [origen, destino]
-        self.trayectos[nombre_trayecto] = ciudades
+        try:
+            self.crear_ruta(origen, destino)
+            ciudades = [origen, destino]
+            self.trayectos[nombre_trayecto] = ciudades
+        except MISMACIUDAD as e:
+            print(e.message)
 
     def agregar_ciudad_intermedia(self, trayecto, ciudad, indice):
         """Agrega una ruta entre las ciudades indice - 1 indice y indice + 1 si es posible"""
-        if int(indice) > 0:
-            if ciudad == trayecto[int(indice) - 1]:
-                print("no se puede crear un trayecto desde y hacia la misma ciudad")
-                return
-            self.crear_ruta(trayecto[indice - 1], ciudad)
-        if int(indice) < len(trayecto):
-            if ciudad == trayecto[int(indice)]:
-                print("no se puede crear un trayecto desde y hacia la misma ciudad")
-                return
-            self.crear_ruta(ciudad, trayecto[indice])
-        trayecto.insert(indice, ciudad)
+        try:
+            if int(indice) > 0:
+                self.crear_ruta(trayecto[indice - 1], ciudad)
+            if int(indice) < len(trayecto):
+                self.crear_ruta(ciudad, trayecto[indice])
+            trayecto.insert(indice, ciudad)
+        except MISMACIUDAD as e:
+            print(e.message)
 
     def concatenar_trayectos(self, nuevo_trayecto, primer_trayecto, segundo_trayecto):
-        if nuevo_trayecto in self.trayectos.keys():
-            print("ya existe un trayecto con ese nombre")
-            return
-        self.crear_ruta(self.trayectos[primer_trayecto][-1], self.trayectos[segundo_trayecto][0])
-        self.trayectos[nuevo_trayecto] = self.trayectos[primer_trayecto] + self.trayectos[segundo_trayecto]
+        try:
+            self.crear_ruta(self.trayectos[primer_trayecto][-1], self.trayectos[segundo_trayecto][0])
+            self.trayectos[nuevo_trayecto] = self.trayectos[primer_trayecto] + self.trayectos[segundo_trayecto]
+        except MISMACIUDAD as e:
+            print(e.message)
 
-    def comparar_trayectos_por_distancia(self, primer_trayecto, segundo_trayecto):
-        total_primero = self.obtener_distancia_total(primer_trayecto)
-        total_segundo = self.obtener_distancia_total(segundo_trayecto)
-        print(primer_trayecto + ": " + self.formatear_distancia(total_primero))
-        print(segundo_trayecto + ": " + self.formatear_distancia(total_segundo))
+    def comparar_trayectos(self, primer_trayecto, segundo_trayecto, tipo):
+        comparacion = self.obtener_distancia_total
+        formato = self.formatear_distancia
+        if tipo == "t":
+            comparacion = self.obtener_tiempo_total
+            formato = self.formatear_tiempo
+        table_data = [["Nombre", "Distancia"]]
+        total_primero = comparacion(primer_trayecto)
+        total_segundo = comparacion(segundo_trayecto)
+        table_data.append([primer_trayecto, formato(total_primero)])
+        table_data.append([segundo_trayecto, formato(total_segundo)])
+        table = DoubleTable(table_data, "")
+        table.justify_columns = {0: 'center', 1: 'left'}
+        print(table.table, "\n")
         if total_primero < total_segundo:
-            print("Diferencia: " + self.formatear_distancia(total_segundo - total_primero))
+            print("El trayecto: " + primer_trayecto + ". Es" + formato(
+                total_segundo - total_primero) + " mas largo \n")
         else:
-            print("Diferencia: " + self.formatear_distancia(total_primero - total_segundo))
-
-    def comparar_trayectos_por_tiempo(self, primer_trayecto, segundo_trayecto):
-        total_primero = self.obtener_tiempo_total(primer_trayecto)
-        total_segundo = self.obtener_tiempo_total(segundo_trayecto)
-        print(primer_trayecto + ": " + self.formatear_tiempo(total_primero))
-        print(segundo_trayecto + ": " + self.formatear_tiempo(total_segundo))
-        if total_primero < total_segundo:
-            print("Diferencia: " + self.formatear_tiempo(total_segundo - total_primero))
-        else:
-            print("Diferencia: " + self.formatear_tiempo(total_primero - total_segundo))
+            print("El trayecto: " + segundo_trayecto + ". Es" + formato(
+                total_primero - total_segundo) + " mas largo \n")
 
     def ver_trayecto(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
@@ -77,26 +81,26 @@ class MotorDeRutas:
 
     def listar_rutas(self, nombre_trayecto):
         trayecto = self.trayectos[nombre_trayecto]
+        table_data = [["Origen -> Destino", "Distancia", "Duracion"]]
         for i in range(0, len(trayecto) - 1):
             ruta = self.unir_origen_destino(trayecto[i], trayecto[i + 1])
-            print(ruta)
-            print(self.formatear_distancia(self.rutas[ruta][1]))
-            print(self.formatear_tiempo(self.rutas[ruta][0]))
+            table_data.append(
+                [ruta, self.formatear_distancia(self.rutas[ruta][1]), self.formatear_tiempo(self.rutas[ruta][0])])
+        table = DoubleTable(table_data, "")
+        table.justify_columns = {0: 'center', 1: 'left', 2: 'left'}
+        print(table.table, "\n")
 
     def salir_y_guardar_trayectos(self):
+        """Guarda los datos en el Json y luego cierra el programa"""
         self.trayectosModel.toJson(self.trayectos)
         self.rutasModel.toJson(self.rutas)
         from vistas.Menu import menu
         menu.terminar = True
 
     def crear_ruta(self, origen, destino):
-        """Crea una nueva ruta si no esta presente en el diccionario
-
-        si no puede crear la ruta tira una excepcion
-        """
+        """Crea una nueva ruta si no esta presente en el diccionario"""
         if origen == destino:
-            print("las ciudades deben ser distintas")
-            return
+            raise MISMACIUDAD
         nombre_de_ruta = self.unir_origen_destino(origen, destino)
         if nombre_de_ruta not in self.rutas.keys():
             try:
@@ -109,10 +113,10 @@ class MotorDeRutas:
                 print(e)
 
     def unir_origen_destino(self, origen, destino):
-        return origen + "-" + destino
+        return origen + " -> " + destino
 
     def separar_origen_destino(self, ruta):
-        return ruta.split("-")
+        return ruta.split(" -> ")
 
     def obtener_tiempo_total(self, nombre):
         trayecto = self.trayectos[nombre]
@@ -147,10 +151,8 @@ class MotorDeRutas:
         d = distancia / 1000
         return "{0:8.2f} km".format(d)
 
-    def obtener_nombre_correcto(self, ciudad):
-        return gmaps.distance_matrix(ciudad, ciudad)['origin_addresses'][0].split(",")[0]
-
     def obtener_ciudades_posibles(self, ciudad):
+        """Utilizando el autocomplete de gmaps devuelve las ciudades con nombre similar al ingresado"""
         data_ciudades = gmaps.places_autocomplete(ciudad, type="(cities)", language="es")
         ciudades_posibles = {}
         index = 1

@@ -5,5 +5,4 @@ from vistas.Menu import menu
 while not menu.terminar:
     menu.elegir_operacion()
 
-if menu.terminar:
-    menu.mensajeDeSalida()
+menu.mensaje_de_salida()
