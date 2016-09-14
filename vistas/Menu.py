@@ -40,7 +40,7 @@ class Menu(object):
         """PREGUNTA AL USUARIO QUE FUNCIONALIDAD REQUIERE"""
         try:
             op = int(self.seleccion_menu(self.operaciones, "operación"))
-            print("--------------------------------------------------")
+            print("-" * 70)
             print("\nOperacion seleccionada:", self.operaciones[op], "\n")
             self.menus_disponibles[op]()
             self.continuar_operacion(op)
@@ -49,11 +49,13 @@ class Menu(object):
 
     def crear_trayecto(self):
         """MENU PARA CREAR UN NUEVO TRAYECTO"""
-        nombre_trayecto = self.validar_nombre_trayecto()
-        origen = self.obtener_nombre_de_ciudad("de origen")
-        destino = self.obtener_nombre_de_ciudad("de destino")
-        self.motor.crear_trayecto(nombre_trayecto, origen, destino)
-        self.clear()
+        try:
+            nombre_trayecto = self.validar_nombre_trayecto()
+            origen = self.obtener_nombre_de_ciudad("de origen")
+            destino = self.obtener_nombre_de_ciudad("de destino")
+            self.motor.crear_trayecto(nombre_trayecto, origen, destino)
+        except:
+            print("Error en la coneccion con el servidor de google, reintente nuevamente en un momento")
 
     def agregar_ciudad(self):
         """MENU PARA AÑADIR CIUDAD"""
@@ -76,7 +78,11 @@ class Menu(object):
                     print("Debe ingresar un numero entre 1 y " + str(len(trayecto)))
             except ValueError:
                 print("Debe ingresar un numero entre 1 y " + str(len(trayecto)))
-        self.motor.agregar_ciudad_intermedia(trayecto, self.obtener_nombre_de_ciudad("a añadir"), posicion)
+        try:
+            nombre_ciudad = self.obtener_nombre_de_ciudad("a añadir")
+            self.motor.agregar_ciudad_intermedia(trayecto, nombre_ciudad, posicion)
+        except:
+            print("Error en la coneccion con el servidor de google, reintente nuevamente en un momento")
 
     def concatenar_trayectos(self):
         nombre = self.validar_nombre_trayecto()
@@ -87,12 +93,7 @@ class Menu(object):
     def info_trayecto(self):
         """MENU PARA OBTENER INFORMACION DE UN TARYECTO SELECCIONADO"""
         op = self.seleccionar_trayecto()
-        data_trayecto = self.motor.ver_trayecto(op)
-        table_data = [["Nombre", "Ciudades del Trayecto", "Distancia en Kms", "Tiempo estimado de viaje"]]
-        table_data.append(data_trayecto)
-        table = DoubleTable(table_data, "Ver Informacion de Trayecto seleccionado ")
-        table.justify_columns = {0: 'center'}
-        print(table.table)
+        self.motor.ver_trayecto(op)
 
     def rutas_trayecto(self):
         """MENU PARA OBTENER INFORMACION DE LAS RUTAS DE UN TRAYECTO"""
@@ -167,11 +168,11 @@ class Menu(object):
     def seleccion_menu(self, opciones, texto):
         posicion = -1
         while posicion == -1:
-            print("------------------------------------------------")
+            print("-" * 70)
             print("Motor de Rutas", " - ", "Operaciones Disponibles")
             for clave, valor in sorted(opciones.items()):
                 print("\t [" + str(clave) + "] - ", valor)
-            print("------------------------------------------------")
+            print("-" * 70)
             try:
                 numero = int(input("\nInserte número de la " + texto + " que desea: "))
                 if len(opciones) >= numero >= 1:
@@ -228,7 +229,7 @@ class Menu(object):
             print("¿Desea continuar operando con el Motor de Rutas?"
                   "\n Oprima [Enter] para continuar o [N] para salir:")
             continuar_con_motor = str(input())
-            if continuar_con_motor.upper() == "N":
+            if continuar_con_motor.strip().upper() == "N":
                 self.menus_disponibles[len(self.operaciones)]()
             else:
                 self.clear()
