@@ -79,12 +79,14 @@ class MotorDeRutas:
         table.justify_columns = {0: 'center', 1: 'left'}
         print(table.table, "\n")
         print("-" * 70)
-        if total_primero < total_segundo:
-            print("El trayecto: " + primer_trayecto + ". Es" + formato(
+        if total_primero > total_segundo:
+            print("El trayecto: " + primer_trayecto + ", es " + formato(
+                total_primero - total_segundo) + " mas largo")
+        elif total_primero < total_segundo:
+            print("El trayecto: " + segundo_trayecto + ", es " + formato(
                 total_segundo - total_primero) + " mas largo")
         else:
-            print("El trayecto: " + segundo_trayecto + ". Es" + formato(
-                total_primero - total_segundo) + " mas largo")
+            print("Los trayetos son iguales")
         print("-" * 70 + "\n")
 
     def ver_trayecto(self, nombre_trayecto):
@@ -169,11 +171,11 @@ class MotorDeRutas:
         t = tiempo
         dias = int(t / 24 / 60 / 60)
         if dias != 0:
-            respuesta += "{0:2d} dias,".format(dias)
+            respuesta += "{0:2d} dias, ".format(dias)
         t -= dias * 24 * 60 * 60
         horas = int(t / 60 / 60)
         if dias != 0 or horas != 0:
-            respuesta += "{0:2d} horas,".format(horas)
+            respuesta += "{0:2d} horas, ".format(horas)
         t -= horas * 60 * 60
         minutos = int(t / 60)
         respuesta += "{0:2d} min".format(minutos)
