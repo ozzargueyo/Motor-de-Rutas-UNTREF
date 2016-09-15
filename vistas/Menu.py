@@ -44,8 +44,8 @@ class Menu(object):
             print("\nOperacion seleccionada:", self.operaciones[op], "\n")
             self.menus_disponibles[op]()
             self.continuar_operacion(op)
-        except IndentationError:
-            print("Ocurrio un error")
+        except :
+            print("Ocurrio un error en la seleccion de la operación")
 
     def crear_trayecto(self):
         """MENU PARA CREAR UN NUEVO TRAYECTO"""
@@ -71,7 +71,7 @@ class Menu(object):
         print(table.table, "\n")
         while posicion == -1:
             try:
-                numero = int(input("Seleccione la posicion a insertar la nueva ciudad."))
+                numero = int(input("Seleccione la posicion a insertar la nueva ciudad: "))
                 if len(trayecto) + 1 >= numero >= 1:
                     posicion = numero - 1
                 else:
@@ -198,7 +198,7 @@ class Menu(object):
         print(table.table, "\n")
         while posicion == -1:
             try:
-                numero = int(input("Ingese la opción que desea:"))
+                numero = int(input("Ingese la opción que desea: "))
                 if len(lista) >= numero >= 1:
                     posicion = numero - 1
                 else:
